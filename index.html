@@ -116,7 +116,7 @@
             
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
-                    window.location.href = 'index.html'; // Redirecciona después del inicio de sesión
+                    window.location.href = 'inicio.html'; // Redirecciona después del inicio de sesión
                 })
                 .catch(error => {
                     errorDiv.textContent = 'Usario o contraseñas invalidos' ;
