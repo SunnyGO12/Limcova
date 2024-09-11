@@ -452,24 +452,41 @@
         });
     }
 
-    function downloadExcel() {
-        const selectedWeek = document.getElementById("weekDropdown").value || activeWeek || 1;
+async function downloadExcel() {
+    const selectedWeek = document.getElementById("weekDropdown").value || activeWeek || 1;
+    const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const wb = XLSX.utils.book_new(); // Crear un nuevo libro de Excel
+    const ws_data = [['Día', 'Total Corte (kg)']]; // Encabezados de las columnas
 
-        const wb = XLSX.utils.book_new();
-        const ws_data = [
-            ['Día', 'Total Corte (kg)'],
-            ['Lunes', localStorage.getItem(`week${selectedWeek}_lunes`) || 0],
-            ['Martes', localStorage.getItem(`week${selectedWeek}_martes`) || 0],
-            ['Miércoles', localStorage.getItem(`week${selectedWeek}_miercoles`) || 0],
-            ['Jueves', localStorage.getItem(`week${selectedWeek}_jueves`) || 0],
-            ['Viernes', localStorage.getItem(`week${selectedWeek}_viernes`) || 0],
-            ['Sábado', localStorage.getItem(`week${selectedWeek}_sabado`) || 0]
-        ];
+    try {
+        // Iterar sobre los días y obtener los datos desde Firebase
+        for (let i = 0; i < days.length; i++) {
+            const docRef = db.collection('cortes_carne').doc(`semana_${selectedWeek}_${days[i]}`);
+            const doc = await docRef.get();
 
+            if (doc.exists) {
+                const dayData = doc.data();
+                const totalDay = dayData[`total${days[i].charAt(0).toUpperCase() + days[i].slice(1)}`] || 0;
+
+                // Añadir los datos de este día a la hoja de Excel
+                ws_data.push([days[i].charAt(0).toUpperCase() + days[i].slice(1), totalDay]);
+            } else {
+                // Si no existen datos, añadir 0 como valor por defecto
+                ws_data.push([days[i].charAt(0).toUpperCase() + days[i].slice(1), 0]);
+                console.log(`No existen datos para el día ${days[i]} de la semana ${selectedWeek}`);
+            }
+        }
+
+        // Crear la hoja de cálculo con los datos recopilados
         const ws = XLSX.utils.aoa_to_sheet(ws_data);
         XLSX.utils.book_append_sheet(wb, ws, `Cortes de Carne Semana ${selectedWeek}`);
+
+        // Descargar el archivo Excel
         XLSX.writeFile(wb, `RegistroCortes_Semana${selectedWeek}.xlsx`);
+    } catch (error) {
+        console.error('Error obteniendo datos de Firebase:', error);
     }
+}
 
     document.getElementById("closeSessionButton").addEventListener("click", function() {
         window.location.href = 'index.html';
