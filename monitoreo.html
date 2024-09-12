@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #e9ebee;
+            color: #1c1e21;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Estilo del header */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #00a19a; /* Azul verdoso */
+            padding: 10px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Logotipo y título centrados */
+        .logo-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-title img {
+            height: 60px; /* Tamaño ajustado del logotipo */
+            margin-right: 10px;
+        }
+
+        .logo-title h1 {
+            color: white;
+            font-size: 24px;
+            margin: 0;
+        }
+
+        /* Botón "Atrás" alineado más arriba y a la derecha */
+        .back-button {
+            background-color: #1877f2; /* Color azul del botón */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px; /* Ovalado */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Diseño 3D */
+            cursor: pointer;
+            font-size: 16px;
+            position: absolute; /* Alinea el botón en la esquina derecha */
+            right: 20px;
+            top: 20px; /* Movemos el botón más arriba */
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #145db2; /* Color más oscuro al pasar el mouse */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Menú de navegación debajo del header */
+        nav {
+            background-color: #00796b; /* Fondo azul verdoso oscuro */
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav a {
+            background-color: #ffffff; /* Fondo blanco de los botones */
+            color: #00796b; /* Texto azul verdoso */
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #004d40; /* Fondo más oscuro al pasar el mouse */
+            color: white;
+        }
+
+        /* Título más cerca del menú */
+        .container h1 {
+            margin-top: 10px; /* Reduce el espacio entre el título y el menú */
+            font-size: 24px;
+        }
+
+        /* Estilo del contenedor principal */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+        }
+
+        .video-item {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .video-item img {
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 640px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo del pie de página */
+        footer {
+            background-color: #00a19a;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con logotipo, título centrado y botón "Atrás" más arriba y a la derecha -->
+    <header>
+        <div class="logo-title">
+            <img src="logotipo.png" alt="Logotipo">
+            <h1>Monitoreo y Control</h1>
+        </div>
+        <a href="inicio.html">
+            <button class="back-button">Atrás</button>
+        </a>
+    </header>
+
+    <!-- Menú de navegación debajo del header -->
+    <nav>
+        <a href="control.html">Control</a>
+        <a href="nivel-de-liquidos.html">Nivel de líquidos</a>
+        <a href="presion.html">Presión</a>
+        <a href="flujo.html">Flujo</a>
+    </nav>
+
+    <!-- Contenido principal con los videos -->
+    <div class="container">
+        <h1>Stream de Video con Análisis de Color - Dos Cámaras</h1>
+        <div class="video-container">
+            <div class="video-item">
+                <h3>Cámara 1. Vista Superior</h3>
+                <img src="{{ url_for('video_feed1') }}">
+            </div>
+            <div class="video-item">
+                <h3>Cámara 2. Vista Inferior</h3>
+                <img src="{{url_for('video_feed2')}}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        &copy; 2024 Limcova. Todos los derechos reservados. <br>
+        Christopher Castillo y Gabriela Concepción
+    </footer>
+</body>
+</html>
