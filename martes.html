@@ -105,7 +105,7 @@
 </head>
 <body>
     <header>
-        <img src="logotipo.png" alt="Logotipo de Limcova">
+        <img src="{{ url_for('static', filename='images/logotipo.png') }}" alt="Logotipo Limcova">
         <h1>Registro de Cortes de Carne - Martes</h1>
     </header>
 
@@ -260,6 +260,36 @@
             document.getElementById('category3').value = '';
             document.getElementById('category4').value = '';
         });
+
+        document.getElementById('exportToExcelMartes').addEventListener('click', function() {
+    // Recolecta los datos del formulario
+    const category1 = parseFloat(document.getElementById('category1').value) || 0;
+    const category2 = parseFloat(document.getElementById('category2').value) || 0;
+    const category3 = parseFloat(document.getElementById('category3').value) || 0;
+    const category4 = parseFloat(document.getElementById('category4').value) || 0;
+    const totalMartes = parseFloat(document.getElementById('totalMartes').innerText) || 0;
+
+    // Crea un array con los datos
+    const data = [
+        ['Corte', 'Cantidad (kg)'],
+        ['Corte Musculo Rojo', category1],
+        ['Corte Conectivo', category2],
+        ['Corte Graso', category3],
+        ['Corte Vascular', category4],
+        ['Total Martes', totalMartes]
+    ];
+
+    // Crea una hoja de trabajo a partir de los datos
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Crea un nuevo libro de trabajo y agrega la hoja de trabajo
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Cortes de Carne Martes");
+
+    // Genera y descarga el archivo Excel
+    XLSX.writeFile(wb, 'Cortes_de_Carne_Martes.xlsx');
+});
+
     </script>
 </body>
 </html>
