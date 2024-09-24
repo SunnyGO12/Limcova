@@ -60,6 +60,7 @@
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
+            margin-bottom: 20px;
         }
         button:hover {
             background-color: #a21a2d;
@@ -68,6 +69,29 @@
             color: red;
             font-size: 14px;
             margin-bottom: 20px;
+        }
+
+        /* Botón 3D para comentarios */
+        .button-3d {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 5px #004999;
+            transition: all 0.3s ease;
+        }
+
+        .button-3d:active {
+            box-shadow: 0 2px #004999;
+            transform: translateY(3px);
+        }
+
+        .button-3d:hover {
+            background-color: #005bb5;
         }
     </style>
 </head>
@@ -83,6 +107,7 @@
         <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password" required>
         <div id="error" class="error"></div>
         <button id="loginButton">Iniciar Sesión</button>
+        <button class="button-3d" onclick="window.location.href='opinion.html'">Comentarios</button>
     </div>
 
     <script>
@@ -119,7 +144,7 @@
                     window.location.href = 'inicio.html'; // Redirecciona después del inicio de sesión
                 })
                 .catch(error => {
-                    errorDiv.textContent = 'Usario o contraseñas invalidos' ;
+                    errorDiv.textContent = 'Usuario o contraseña inválidos';
                 });
         }
     </script>
