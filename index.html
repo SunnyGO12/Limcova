@@ -14,7 +14,11 @@
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
+
         header {
             display: flex;
             align-items: center;
@@ -23,17 +27,47 @@
             padding: 20px;
             color: white;
             text-align: center;
+            position: relative;
         }
+
         header img {
             width: 100px;
             height: auto;
             margin-right: 20px;
         }
+
         header h1 {
             font-size: 32px;
             color: white;
             text-align: center;
         }
+
+        /* Botón "Comentarios" pequeño en la esquina superior derecha */
+        .comentarios-btn {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 1px; /* Reducción del ancho */
+            font-size: 15px; /* Fuente pequeña */
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: 150px; /* Ancho ajustado */
+        }
+
+        .comentarios-btn:hover {
+            background-color: #005bb5;
+            box-shadow: 0 6px #004999; /* Sombra más pronunciada en hover */
+        }
+
+        .comentarios-btn:active {
+            transform: translateY(3px); /* Movimiento hacia abajo en clic */
+            box-shadow: 0 2px #004999;  /* Menos sombra para simular que el botón se presiona */
+        }
+
         .container {
             max-width: 400px;
             margin: 80px auto;
@@ -43,6 +77,7 @@
             border-radius: 10px;
             text-align: center;
         }
+
         input {
             width: calc(100% - 20px);
             padding: 10px;
@@ -51,6 +86,7 @@
             border-radius: 4px;
             margin-bottom: 20px;
         }
+
         button {
             background-color: #c8102e;
             color: white;
@@ -62,36 +98,32 @@
             width: 100%;
             margin-bottom: 20px;
         }
+
         button:hover {
             background-color: #a21a2d;
         }
+
         .error {
             color: red;
             font-size: 14px;
             margin-bottom: 20px;
         }
 
-        /* Botón 3D para comentarios */
-        .button-3d {
-            background-color: #0066cc;
+        /* Estilos para el pie de página */
+        footer {
+            background-color: #3f282c;
             color: white;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 6px;
-            cursor: pointer;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
             width: 100%;
-            box-shadow: 0 5px #004999;
-            transition: all 0.3s ease;
+            margin-top: auto;
         }
 
-        .button-3d:active {
-            box-shadow: 0 2px #004999;
-            transform: translateY(3px);
-        }
-
-        .button-3d:hover {
-            background-color: #005bb5;
+        footer p {
+            margin: 0;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -99,6 +131,8 @@
     <header>
         <img src="logotipo.png" alt="Logotipo de Limcova">
         <h1>Limcova - Limpiadora de Máquinas Cortadora</h1>
+        <!-- Botón de comentarios en la esquina superior derecha -->
+        <button class="comentarios-btn" onclick="window.location.href='opinion.html'">Comentarios</button>
     </header>
 
     <div class="container">
@@ -107,8 +141,11 @@
         <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password" required>
         <div id="error" class="error"></div>
         <button id="loginButton">Iniciar Sesión</button>
-        <button class="button-3d" onclick="window.location.href='opinion.html'">Comentarios</button>
     </div>
+
+    <footer>
+        <p>&copy; 2024 Limcova. Todos los derechos reservados.</p>
+    </footer>
 
     <script>
         // Configuración de Firebase
