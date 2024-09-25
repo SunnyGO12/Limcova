@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foro - Opiniones</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Limcova - Cortes de Carne y Monitoreo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.1/dist/xlsx.full.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -16,228 +18,190 @@
             flex-direction: column;
             min-height: 100vh;
             background-color: #e9f2f9;
-            position: relative;
         }
 
-        /* Marca de agua más grande (logotipo) */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('logotipo.png');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 80%; /* Tamaño más grande */
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        header {
-            background-color: #0066cc;
+        footer {
+            background-color: #333;
             color: white;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
             position: relative;
-            z-index: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         header img {
-            max-width: 40px;
+            max-width: 80px;
             height: auto;
             vertical-align: middle;
             margin-right: 10px;
         }
 
         header h1 {
+            display: inline;
             font-size: 26px;
             margin: 0;
             font-weight: 600;
-            display: inline;
         }
 
-        /* Botón "Gráficos y Datos" */
-        .btn-datos {
+        header button {
+            background-color: #c8102e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 30px;
             position: absolute;
-            top: 50%;
             right: 20px;
+            top: 50%;
             transform: translateY(-50%);
-            background-color: #004999;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
             font-weight: 600;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        .btn-datos:hover {
-            background-color: #003366;
+        header button:hover {
+            background-color: #a21a2d;
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
         }
 
-        footer {
-            background-color: #0066cc;
-            color: white;
-            padding: 20px;
+        nav {
+            background-color: #333;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
             text-align: center;
-            font-size: 14px;
-            margin-top: auto;
-            z-index: 1;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
         }
 
-        main {
-            flex: 1;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
+        nav ul li {
+            margin: 0 20px;
         }
 
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        form h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #0066cc;
-        }
-
-        label {
+        nav ul li a {
+            display: block;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
             font-weight: 600;
-            color: #333;
+            background-color: #777;
+            border-radius: 25px;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        textarea, input {
+        nav ul li a:hover {
+            background-color: #999;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .charts {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .chart {
             width: 100%;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .dropdown {
+            display: flex;
+            justify-content: flex-end;
             padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-        }
-
-        button {
-            background-color: #0066cc;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-
-        button:hover {
-            background-color: #004999;
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .opiniones {
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .opinion {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-
-        .opinion:last-child {
-            border-bottom: none;
-        }
-
-        .opinion h3 {
-            font-size: 18px;
-            color: #0066cc;
-            margin: 0 0 5px;
-        }
-
-        .opinion p {
-            font-size: 16px;
-            color: #333;
-        }
-
-        .back-button {
-            text-align: center;
             margin-top: 20px;
         }
 
-        .back-button a {
-            background-color: #0066cc;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
+        .dropdown select {
+            padding: 10px;
             font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
 
-        .back-button a:hover {
-            background-color: #004999;
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 30px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #218838;
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .opinion-time {
-            font-size: 12px;
-            color: #666;
+        .center-buttons {
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="logotipo.png" alt="Logotipo">
-    <h1>Foro - Deja tu Opinión</h1>
-    <button class="btn-datos" onclick="window.location.href='graficos.html'">Gráficos y Datos</button>
-</header>
+    <header>
+        <img src="logotipo.png" alt="Logotipo de Limcova">
+        <h1>Limcova - Cortes de Carne y Monitoreo</h1>
+        <button id="closeSessionButton">Volver</button>
+    </header>
 
-<main>
-    <form id="opinionForm">
-        <h2>Enviar una Opinión</h2>
-        <label for="nombre">Tu Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-        
-        <label for="opinion">Tu Opinión:</label>
-        <textarea id="opinion" name="opinion" required></textarea>
-        
-        <button type="submit">Enviar</button>
-    </form>
+    <main>
+        <section id="history">
+            <h2>Resumen Total de Cortes de Carne</h2>
 
-    <section class="opiniones" id="opinionesSection">
-        <h2>Opiniones Anteriores</h2>
-        <!-- Aquí se mostrarán las opiniones cargadas desde Firestore -->
-    </section>
+            <div class="dropdown">
+                <select id="weekDropdown" onchange="loadSelectedWeekData()">
+                    <option value="1">Semana 1</option>
+                    <option value="2">Semana 2</option>
+                    <option value="3">Semana 3</option>
+                    <option value="4">Semana 4</option>
+                    <option value="5">Semana 5</option>
+                </select>
+            </div>
 
-    <div class="back-button">
-        <a href="index.html">Volver a Inicio</a>
-    </div>
-</main>
+            <div class="charts">
+                <canvas id="totalMeatCutsChart" class="chart"></canvas>
+            </div>
+            <div class="charts">
+                <canvas id="weeklyCutsChart" class="chart"></canvas>
+            </div>
 
-<footer>
-    <p>&copy; 2024 Foro. Todos los derechos reservados.</p>
-</footer>
+            <div class="center-buttons">
+                <button onclick="downloadExcel()">Exportar a XLS</button>
+                <button onclick="printCharts()">Imprimir Gráficas</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Limcova. Todos los derechos reservados.</p>
+    </footer>
 
 <script>
+    let totalMeatCutsChart;
+    let weeklyCutsChart;
+
     // Configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAXxM0o30q4ZoYNutXPb8OEIVGbSI69lpY",
@@ -249,68 +213,199 @@
         measurementId: "G-FQG16ZQK37"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const opinionForm = document.getElementById('opinionForm');
-    const opinionesSection = document.getElementById('opinionesSection');
+    async function loadSelectedWeekData() {
+        const selectedWeek = document.getElementById("weekDropdown").value || 1;
 
-    // Función para guardar opiniones en Firestore
-    opinionForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
+        // Document names in Firebase follow the format 'semana_X_dia'
+        // You will have to check for each day (lunes, martes, miércoles, etc.)
+        const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+        let data = [0, 0, 0, 0, 0, 0]; // To store total cuts for each day
 
-        const opinionText = document.getElementById('opinion').value;
-        const nombre = document.getElementById('nombre').value;
+        try {
+            // Iterate over each day to extract data from Firebase
+            for (let i = 0; i < days.length; i++) {
+                const docRef = db.collection('cortes_carne').doc(`semana_${selectedWeek}_${days[i]}`);
+                const doc = await docRef.get();
 
-        if (opinionText && nombre) {
-            try {
-                // Guardar la opinión en Firestore
-                await db.collection('opiniones').add({
-                    nombre: nombre,
-                    texto: opinionText,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                if (doc.exists) {
+                    const dayData = doc.data();
+                    data[i] = dayData[`total${days[i].charAt(0).toUpperCase() + days[i].slice(1)}`] || 0;
+                    console.log(`Datos obtenidos para el día ${days[i]} de la semana ${selectedWeek}:`, dayData);
+                } else {
+                    console.log(`No existen datos para el día ${days[i]} de la semana ${selectedWeek}`);
+                }
+            }
 
-                // Mostrar la opinión en la página sin recargar
-                addOpinionToDOM(nombre, opinionText, new Date());
+            // Actualiza la gráfica con los datos extraídos
+            updateChart(data, `Cortes de Carne - Semana ${selectedWeek}`);
+        } catch (error) {
+            console.error('Error obteniendo datos de Firebase:', error);
+        }
+    }
 
-                // Limpiar los campos
-                document.getElementById('opinion').value = '';
-                document.getElementById('nombre').value = '';
-            } catch (error) {
-                console.error('Error al guardar la opinión:', error);
+    async function loadWeeklyTotals() {
+        // Semana 1 a Semana 5
+        let weeklyTotals = [0, 0, 0, 0, 0]; // Para almacenar las sumas totales por semana
+        const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+
+        try {
+            // Recorremos cada semana (del 1 al 5)
+            for (let week = 1; week <= 5; week++) {
+                let weeklyTotal = 0; // Total de la semana actual
+
+                // Recorremos cada día (lunes a sábado) para la semana actual
+                for (let i = 0; i < days.length; i++) {
+                    const docRef = db.collection('cortes_carne').doc(`semana_${week}_${days[i]}`);
+                    const doc = await docRef.get();
+
+                    if (doc.exists) {
+                        const dayData = doc.data();
+                        const totalDay = dayData[`total${days[i].charAt(0).toUpperCase() + days[i].slice(1)}`] || 0;
+                        weeklyTotal += totalDay; // Sumamos el total del día a la semana
+                    }
+                }
+
+                weeklyTotals[week - 1] = weeklyTotal; // Guardamos la sumatoria total de la semana
+                console.log(`Total para la semana ${week}: ${weeklyTotal}`);
+            }
+
+            // Actualiza la gráfica con los totales de las semanas
+            updateWeeklyChart(weeklyTotals);
+        } catch (error) {
+            console.error('Error obteniendo datos de Firebase:', error);
+        }
+    }
+
+    function updateWeeklyChart(data) {
+        const ctxWeeklyCuts = document.getElementById("weeklyCutsChart").getContext("2d");
+
+        if (weeklyCutsChart) {
+            weeklyCutsChart.destroy(); // Destruir el gráfico anterior si ya existe
+        }
+
+        weeklyCutsChart = new Chart(ctxWeeklyCuts, {
+            type: "line",
+            data: {
+                labels: ["Semana 1", "Semana 2", "Semana 3", "Semana 4", "Semana 5"],
+                datasets: [{
+                    label: "Total de Cortes por Semana",
+                    data: data,
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function loadCharts() {
+        loadSelectedWeekData();
+        loadWeeklyTotals(); // Cargar los totales por semana
+    }
+
+    function updateChart(data, label) {
+        const ctxTotalMeatCuts = document.getElementById("totalMeatCutsChart").getContext("2d");
+
+        if (totalMeatCutsChart) {
+            totalMeatCutsChart.destroy(); // Destruir la gráfica anterior antes de crear una nueva
+        }
+
+        // Crear la nueva gráfica con los datos actualizados
+        totalMeatCutsChart = new Chart(ctxTotalMeatCuts, {
+            type: "bar",
+            data: {
+                labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+async function downloadExcel() {
+    const selectedWeek = document.getElementById("weekDropdown").value || 1;
+    const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+    const wb = XLSX.utils.book_new(); // Crear un nuevo libro de Excel
+    const ws_data = [['Día', 'Total Corte (kg)']]; // Encabezados de las columnas
+
+    try {
+        // Iterar sobre los días y obtener los datos desde Firebase
+        for (let i = 0; i < days.length; i++) {
+            const docRef = db.collection('cortes_carne').doc(`semana_${selectedWeek}_${days[i]}`);
+            const doc = await docRef.get();
+
+            if (doc.exists) {
+                const dayData = doc.data();
+                const totalDay = dayData[`total${days[i].charAt(0).toUpperCase() + days[i].slice(1)}`] || 0;
+
+                // Añadir los datos de este día a la hoja de Excel
+                ws_data.push([days[i].charAt(0).toUpperCase() + days[i].slice(1), totalDay]);
+            } else {
+                // Si no existen datos, añadir 0 como valor por defecto
+                ws_data.push([days[i].charAt(0).toUpperCase() + days[i].slice(1), 0]);
+                console.log(`No existen datos para el día ${days[i]} de la semana ${selectedWeek}`);
             }
         }
+
+        // Crear la hoja de cálculo con los datos recopilados
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        XLSX.utils.book_append_sheet(wb, ws, `Cortes de Carne Semana ${selectedWeek}`);
+
+        // Descargar el archivo Excel
+        XLSX.writeFile(wb, `RegistroCortes_Semana${selectedWeek}.xlsx`);
+    } catch (error) {
+        console.error('Error obteniendo datos de Firebase:', error);
+    }
+}
+
+    document.getElementById("closeSessionButton").addEventListener("click", function() {
+        window.location.href = 'opinion.html';
     });
 
-    // Función para cargar y mostrar opiniones guardadas en Firestore
-    async function loadOpiniones() {
-        try {
-            const querySnapshot = await db.collection('opiniones').orderBy('timestamp', 'desc').get();
-            querySnapshot.forEach((doc) => {
-                const opinionData = doc.data();
-                const fecha = opinionData.timestamp ? opinionData.timestamp.toDate() : new Date();
-                addOpinionToDOM(opinionData.nombre, opinionData.texto, fecha);
-            });
-        } catch (error) {
-            console.error('Error al cargar las opiniones:', error);
-        }
-    }
-
-    // Función para agregar opiniones al DOM
-    function addOpinionToDOM(nombre, texto, fecha) {
-        const opinionDiv = document.createElement('div');
-        opinionDiv.classList.add('opinion');
-        opinionDiv.innerHTML = `<h3>${nombre}</h3><p>${texto}</p><p class="opinion-time">Publicado el: ${fecha.toLocaleString()}</p>`;
-        opinionesSection.appendChild(opinionDiv);
-    }
-
-    // Cargar las opiniones al cargar la página
     window.onload = function() {
-        loadOpiniones();
-    };
-</script>
+        loadCharts(); // Carga la primera gráfica con los días de la semana seleccionada
+    }
 
+    function printCharts() {
+        const totalMeatCutsCanvas = document.getElementById('totalMeatCutsChart');
+        const weeklyCutsCanvas = document.getElementById('weeklyCutsChart');
+
+        const totalMeatCutsImage = totalMeatCutsCanvas.toDataURL('image/jpg');
+        const weeklyCutsImage = weeklyCutsCanvas.toDataURL('image/jpg');
+
+        const linkTotalMeatCuts = document.createElement('a');
+        linkTotalMeatCuts.href = totalMeatCutsImage;
+        linkTotalMeatCuts.download = 'TotalMeatCuts.jpg';
+        linkTotalMeatCuts.click();
+
+        const linkWeeklyCuts = document.createElement('a');
+        linkWeeklyCuts.href = weeklyCutsImage;
+        linkWeeklyCuts.download = 'WeeklyCuts.jpg';
+        linkWeeklyCuts.click();
+    }
+</script>
 </body>
 </html>
